@@ -1,4 +1,4 @@
-Debug/
+﻿Debug/
 Release/
 *.o
 *.d
@@ -10,3 +10,5 @@ Release/
 .settings/
 .project.bak
 *.launch
+.DS_Store
+Thumbs.db
