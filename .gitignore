@@ -12,3 +12,5 @@ Release/
 *.launch
 .DS_Store
 Thumbs.db
+
+~$*
