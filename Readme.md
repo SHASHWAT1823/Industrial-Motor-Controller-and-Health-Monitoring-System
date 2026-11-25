@@ -1,6 +1,6 @@
 <div align="center">
 
-# Industrial Motor Health Monitoring, Fault Detection & Closed-Loop Control System
+# Industrial Motor Controller and Health Monitoring System
 
 **Edge-Intelligent Motion Control & Predictive Maintenance Node powered by STM32G491RE (ARM Cortex-M4 @ 170 MHz)**
 
