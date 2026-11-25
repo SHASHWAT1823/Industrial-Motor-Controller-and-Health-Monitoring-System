@@ -4,12 +4,7 @@
 
 **Edge-Intelligent Motion Control & Predictive Maintenance Node powered by STM32G491RE (ARM Cortex-M4 @ 170 MHz)**
 
-[![MCU](https://img.shields.io/badge/MCU-STM32G491RE%20(Cortex--M4)-03234B?style=for-the-badge&logo=stmicroelectronics)](https://www.st.com/en/microcontrollers-microprocessors/stm32g491re.html)
-[![Language](https://img.shields.io/badge/Language-Embedded%20C%20(C99)-A8B9CC?style=for-the-badge&logo=c)](https://en.cppreference.com/w/c)
-[![DSP](https://img.shields.io/badge/Edge%20DSP-ARM%20CMSIS--DSP-0091BD?style=for-the-badge&logo=arm)](https://www.keil.com/pack/doc/CMSIS/DSP/html/index.html)
-[![License](https://img.shields.io/badge/Status-Phase%201--7%20Verified-2EA44F?style=for-the-badge)](#)
 
-[System Architecture](#-system-architecture) • [Hardware & Pinout](#-hardware-bill-of-materials--pinout) • [Measured Benchmarks](#-experimental-validation--benchmarks) • [Gallery & Demos](#-hardware-gallery--live-demonstrations) • [Industrial Roadmap](#-industrial-extension-roadmap-jan--apr-2027)
 
 </div>
 
@@ -87,56 +82,6 @@ All control and sensing subsystems have been physically verified on the hardware
 | **Static IMU Calibration** | Stationary | `0.0 RPM` | `0.0%` | `0.00 A` | `X: +0.01g`, `Y: -0.04g`, `Z: +1.02g` ($1g$ gravity verified) |
 | **Locked-Rotor / Stall** | `150.0 RPM` | `0.0 RPM` | `0.0%` (Tripped) | Spike $> \text{Limit}$ | Autonomous cutoff triggered in $< 50\text{ ms}$ |
 
----
-
-## 📸 Hardware Gallery & Live Demonstrations
-
-> **Note for Evaluators:** Add your captured bench photos to `media/images/` and test recordings to `media/videos/` using the exact filenames below so they render automatically on this page.
-
-### Physical Hardware & Telemetry Captures
-
-| Complete Test Rig & Power Stage | Breadboard Signal Conditioning & Dividers | Live Serial Telemetry & LCD Dashboard |
-| :---: | :---: | :---: |
-| <img src="media/images/hardware_rig_topdown.png" alt="Hardware Rig" width="280"/> | <img src="media/images/breadboard_circuit.png" alt="Signal Conditioning" width="280"/> | <img src="media/images/telemetry_dashboard.png" alt="Live Telemetry" width="280"/> |
-| *NUCLEO-G491RE, BTS7960, N25 Motor & Buck Stage* | *30k/10k Bus Divider & ACS712 Filtering* | *115200 baud UART & 16×2 Health Display* |
-
-### Verification Video Logs
-* 🎬 **[Phase 1: Open-Loop H-Bridge & PWM Actuation](media/videos/phase1_motor_spin_test.mp4)** — Demonstrates bidirectional PWM control, coasting states, and hardware fuse/switch isolation.
-* 🎬 **[Phase 4: Closed-Loop PI Load Rejection Test](media/videos/phase4_load_regulation_drag_test.mp4)** — Physical friction applied to the rotating shaft; demonstrates real-time current surge tracking ($+0.16\text{ A} \rightarrow +0.38\text{ A}$) and speed recovery to $150\text{ RPM}$.
-* 🎬 **[Phase 6–7: Multi-Sensor Fusion & Vibration Analytics](media/videos/phase6_closedloop_vibration_demo.mp4)** — Simultaneous speed lock, current sensing, and live 3-axis MPU6050 vibration monitoring.
-
----
-
-## 📂 Repository Structure
-
-```text
-Industrial-Motor-Controller-and-Health-Monitoring-System/
-├── Motor_Health_Phase1/          # STM32CubeIDE Firmware Project
-│   ├── Core/
-│   │   ├── Inc/                  # Peripheral & DSP header definitions
-│   │   └── Src/
-│   │       └── main.c            # 100 Hz PI loop, ADC/I2C pipelines, LCD & Fault logic
-│   ├── Drivers/                  # STM32G4xx HAL/LL & ARM CMSIS-DSP libraries
-│   └── Motor_Health_Phase1.ioc   # STM32CubeMX hardware pinout & clock configuration
-├── media/
-│   ├── images/                   # Bench setup photos, wiring & oscilloscope captures
-│   └── videos/                   # Physical load testing & fault trip demonstrations
-└── README.md                     # Master engineering documentation
-```
-
----
-
-## 🚀 Industrial Extension Roadmap (Jan – Apr 2027)
-
-To transition this validated bench prototype into a production-grade industrial/automotive ECU without discarding existing hardware, the following bare-metal and hardware engineering upgrades are scheduled:
-
-* **Custom 2-Layer Stacking Shield PCB (KiCad):** Consolidate all jumper wiring onto a custom Nucleo-64 Morpho/Arduino carrier shield featuring star-ground partitioning (separating high-current motor ground from analog sensor ground), BAT54S Schottky clamping, and SMAJ15CA TVS transient suppression.
-* **Sub-Microsecond Hardware Protection (`TIM1` + `COMP1/2`):** Migrate PWM actuation to Advanced Timer `TIM1` (`PA8`/`PA9`) and link internal dual analog comparators in window mode directly to `TIM1_BDTR` break logic for $<1\ \mu\text{s}$ autonomous hardware gate shutdown—bypassing CPU latency entirely.
-* **Zero-CPU DMA Pipeline:** Synchronize `ADC1`/`ADC2` conversions to the midpoint trigger (`TIM1_TRGO`) using circular ping-pong DMA buffers to eliminate MOSFET switching noise and free CPU cycles.
-* **Industrial Fieldbuses (Modbus-RTU & Classic CAN 2.0B):** Implement a deterministic Modbus-RTU slave engine ($t_{3.5}$ idle framing, CRC-16) over RS-485 (`SP3485`) and $500\text{ kbps}$ cyclic CAN telemetry via on-chip `FDCAN1` (`SN65HVD230`).
-* **Fail-Safe A/B Bootloader & IEC 60730 Class-B Self-Tests:** Deploy a dual-slot In-Application Programming (IAP) bootloader (`VTOR` relocation, 64-bit append-only flash metadata, 3-strike crash rollback), $200\text{ ms}$ pre-fault freeze-frame logging, and startup CPU/SRAM/Flash integrity checks.
-
----
 
 <div align="center">
 
